@@ -175,12 +175,15 @@
           'Are you suuure you want to say no?',
           'Maybe reconsider? I made this just for you 💌',
           'Last chance before the No button escapes 👀',
-          'Okay okay... but what if the answer is YES?'
+          'Okay okay... but what if the answer is YES?',
+          'Nope button unlocked stealth mode 🫥',
+          'Plot twist: every No makes Yes stronger 💥'
         ],
         subtitle: 'One tiny click can unlock unlimited cute moments.',
         yesSubtitle: 'I knew you were the cutest human ❤️',
         yes: 'Yes 💖',
         no: 'No 🙈',
+        noLoop: ['No 🙈', 'Nope 🚫', 'Still no? 🏃', 'Catch me first 😜', 'No-ish 🤏', 'Are you fast enough? ⚡'],
         celebrate: 'YAY! Best answer ever! ✨'
       },
       ar: {
@@ -189,12 +192,15 @@
           'متأكد/ة من كلمة لا؟',
           'فكر/ي مرة ثانية... صممت هذا خصيصًا لك 💌',
           'آخر فرصة قبل ما زر "لا" يهرب 👀',
-          'طيب... ماذا لو كانت الإجابة "نعم"؟'
+          'طيب... ماذا لو كانت الإجابة "نعم"؟',
+          'زر لا دخل وضع التخفي 🫥',
+          'كل "لا" تقوي زر "نعم" أكثر 💥'
         ],
         subtitle: 'ضغطة بسيطة تفتح لحظات لطيفة بلا نهاية.',
         yesSubtitle: 'عرفت أنك/أنكِ ألطف شخص ❤️',
         yes: 'نعم 💖',
         no: 'لا 🙈',
+        noLoop: ['لا 🙈', 'لأ 🚫', 'لسه لا؟ 🏃', 'امسكني أولًا 😜', 'مش متأكد 🤏', 'سرعتك كفاية؟ ⚡'],
         celebrate: 'ياااي! أحلى إجابة! ✨'
       }
     };
@@ -209,6 +215,7 @@
 
     const titleEl = document.getElementById('title');
     const subtitleEl = document.getElementById('subtitle');
+    const actions = document.getElementById('actions');
     const yesBtn = document.getElementById('yesBtn');
     const noBtn = document.getElementById('noBtn');
     const result = document.getElementById('result');
@@ -220,10 +227,10 @@
       const t = content[lang];
       document.documentElement.lang = lang;
       document.body.dir = lang === 'ar' ? 'rtl' : 'ltr';
-      titleEl.textContent = t.title[Math.min(noCount, t.title.length - 1)];
+      titleEl.textContent = t.title[noCount % t.title.length];
       subtitleEl.textContent = t.subtitle;
       yesBtn.textContent = t.yes;
-      noBtn.textContent = t.no;
+      noBtn.textContent = noCount === 0 ? t.no : t.noLoop[noCount % t.noLoop.length];
       resultTitle.textContent = t.celebrate;
       enBtn.classList.toggle('active', lang === 'en');
       arBtn.classList.toggle('active', lang === 'ar');
@@ -232,28 +239,21 @@
     function trickNoButton() {
       noCount += 1;
       render();
+      const actionsRect = actions.getBoundingClientRect();
+      const maxLeft = Math.max(actionsRect.width - noBtn.offsetWidth, 0);
+      const maxTop = Math.max(actionsRect.height - noBtn.offsetHeight, 0);
+      const jumpX = Math.floor(Math.random() * NO_JUMP_X_RANGE) - NO_JUMP_X_OFFSET;
+      const jumpY = Math.floor(Math.random() * NO_JUMP_Y_RANGE) - NO_JUMP_Y_OFFSET;
+      const growYes = Math.min(1.45, 1 + noCount * 0.06);
+      const spin = Math.floor(Math.random() * 120) - 60;
 
-      if (noCount === 1) {
-        noBtn.style.transform = prefersReducedMotion ? 'none' : 'translateX(36px)';
-        return;
-      }
-
-      if (noCount === 2) {
-        noBtn.style.transform = prefersReducedMotion ? 'none' : 'translateY(18px) scale(0.85)';
-        yesBtn.style.transform = prefersReducedMotion ? 'none' : 'scale(1.1)';
-        return;
-      }
-
-      if (noCount === 3) {
-        const jumpX = Math.floor(Math.random() * NO_JUMP_X_RANGE) - NO_JUMP_X_OFFSET;
-        const jumpY = Math.floor(Math.random() * NO_JUMP_Y_RANGE) - NO_JUMP_Y_OFFSET;
-        noBtn.style.transform = prefersReducedMotion ? 'none' : `translate(${jumpX}px, ${jumpY}px) scale(0.78)`;
-        noBtn.style.fontSize = '0.8rem';
-        return;
-      }
-
-      noBtn.style.opacity = '0.42';
-      yesBtn.style.transform = prefersReducedMotion ? 'none' : 'scale(1.16)';
+      noBtn.style.position = 'absolute';
+      noBtn.style.left = `${Math.random() * maxLeft}px`;
+      noBtn.style.top = `${Math.random() * maxTop}px`;
+      noBtn.style.opacity = '1';
+      noBtn.style.fontSize = noCount > 5 ? '0.82rem' : '0.92rem';
+      noBtn.style.transform = prefersReducedMotion ? 'none' : `translate(${jumpX}px, ${jumpY}px) rotate(${spin}deg) scale(${Math.max(0.58, 0.95 - noCount * 0.02)})`;
+      yesBtn.style.transform = prefersReducedMotion ? 'none' : `scale(${growYes})`;
     }
 
     yesBtn.addEventListener('click', () => {
@@ -264,7 +264,7 @@
     });
 
     const evadeNoButton = () => {
-      if (noCount >= 3) {
+      if (noCount >= 1) {
         trickNoButton();
       }
     };
