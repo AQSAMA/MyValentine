@@ -212,6 +212,14 @@
     const NO_JUMP_X_OFFSET = 40;
     const NO_JUMP_Y_RANGE = 30;
     const NO_JUMP_Y_OFFSET = 15;
+    const MAX_YES_SCALE = 1.45;
+    const YES_GROWTH_RATE = 0.06;
+    const FONT_SIZE_SHRINK_THRESHOLD = 5;
+    const NORMAL_NO_FONT_SIZE = '0.92rem';
+    const SHRUNK_NO_FONT_SIZE = '0.82rem';
+    const MIN_NO_SCALE = 0.58;
+    const INITIAL_NO_SCALE = 0.95;
+    const NO_SHRINK_RATE = 0.02;
 
     const titleEl = document.getElementById('title');
     const subtitleEl = document.getElementById('subtitle');
@@ -230,7 +238,7 @@
       titleEl.textContent = t.title[noCount % t.title.length];
       subtitleEl.textContent = t.subtitle;
       yesBtn.textContent = t.yes;
-      noBtn.textContent = noCount === 0 ? t.no : t.noLoop[noCount % t.noLoop.length];
+      noBtn.textContent = noCount === 0 ? t.no : t.noLoop[(noCount - 1) % t.noLoop.length];
       resultTitle.textContent = t.celebrate;
       enBtn.classList.toggle('active', lang === 'en');
       arBtn.classList.toggle('active', lang === 'ar');
@@ -244,15 +252,14 @@
       const maxTop = Math.max(actionsRect.height - noBtn.offsetHeight, 0);
       const jumpX = Math.floor(Math.random() * NO_JUMP_X_RANGE) - NO_JUMP_X_OFFSET;
       const jumpY = Math.floor(Math.random() * NO_JUMP_Y_RANGE) - NO_JUMP_Y_OFFSET;
-      const growYes = Math.min(1.45, 1 + noCount * 0.06);
+      const growYes = Math.min(MAX_YES_SCALE, 1 + noCount * YES_GROWTH_RATE);
       const spin = Math.floor(Math.random() * 120) - 60;
 
       noBtn.style.position = 'absolute';
       noBtn.style.left = `${Math.random() * maxLeft}px`;
       noBtn.style.top = `${Math.random() * maxTop}px`;
-      noBtn.style.opacity = '1';
-      noBtn.style.fontSize = noCount > 5 ? '0.82rem' : '0.92rem';
-      noBtn.style.transform = prefersReducedMotion ? 'none' : `translate(${jumpX}px, ${jumpY}px) rotate(${spin}deg) scale(${Math.max(0.58, 0.95 - noCount * 0.02)})`;
+      noBtn.style.fontSize = noCount > FONT_SIZE_SHRINK_THRESHOLD ? SHRUNK_NO_FONT_SIZE : NORMAL_NO_FONT_SIZE;
+      noBtn.style.transform = prefersReducedMotion ? 'none' : `translate(${jumpX}px, ${jumpY}px) rotate(${spin}deg) scale(${Math.max(MIN_NO_SCALE, INITIAL_NO_SCALE - noCount * NO_SHRINK_RATE)})`;
       yesBtn.style.transform = prefersReducedMotion ? 'none' : `scale(${growYes})`;
     }
 
