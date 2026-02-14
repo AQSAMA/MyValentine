@@ -177,13 +177,16 @@
           'Last chance before the No button escapes 👀',
           'Okay okay... but what if the answer is YES?',
           'Nope button unlocked stealth mode 🫥',
-          'Plot twist: every No makes Yes stronger 💥'
+          'Plot twist: every No makes Yes stronger 💥',
+          'The Yes button is learning giant mode 🪄',
+          'Mission update: No button activated evasive maneuvers 🛸',
+          'Valentine physics says Yes must become enormous 🌟'
         ],
         subtitle: 'One tiny click can unlock unlimited cute moments.',
         yesSubtitle: 'I knew you were the cutest human ❤️',
         yes: 'Yes 💖',
         no: 'No 🙈',
-        noLoop: ['No 🙈', 'Nope 🚫', 'Still no? 🏃', 'Catch me first 😜', 'No-ish 🤏', 'Are you fast enough? ⚡'],
+        noLoop: ['No 🙈', 'Nope 🚫', 'Still no? 🏃', 'Catch me first 😜', 'No-ish 🤏', 'Are you fast enough? ⚡', 'Denied? Let me dodge 💨', 'Not today 😅', 'No... maybe? 🤭'],
         celebrate: 'YAY! Best answer ever! ✨'
       },
       ar: {
@@ -194,13 +197,16 @@
           'آخر فرصة قبل ما زر "لا" يهرب 👀',
           'طيب... ماذا لو كانت الإجابة "نعم"؟',
           'زر لا دخل وضع التخفي 🫥',
-          'كل "لا" تقوي زر "نعم" أكثر 💥'
+          'كل "لا" تقوي زر "نعم" أكثر 💥',
+          'زر نعم بدأ يكبر بشكل مخيف (ولطيف) 🪄',
+          'تحديث المهمة: زر لا فعل وضع المراوغة 🛸',
+          'قوانين عيد الحب تقول: نعم لازم يصير عملاق 🌟'
         ],
         subtitle: 'ضغطة بسيطة تفتح لحظات لطيفة بلا نهاية.',
         yesSubtitle: 'عرفت أنك/أنكِ ألطف شخص ❤️',
         yes: 'نعم 💖',
         no: 'لا 🙈',
-        noLoop: ['لا 🙈', 'لأ 🚫', 'لسه لا؟ 🏃', 'امسكني أولًا 😜', 'مش متأكد 🤏', 'سرعتك كفاية؟ ⚡'],
+        noLoop: ['لا 🙈', 'لأ 🚫', 'لسه لا؟ 🏃', 'امسكني أولًا 😜', 'مش متأكد 🤏', 'سرعتك كفاية؟ ⚡', 'مرفوض؟ خليني أتهرب 💨', 'مو اليوم 😅', 'لا... يمكن؟ 🤭'],
         celebrate: 'ياااي! أحلى إجابة! ✨'
       }
     };
@@ -212,8 +218,11 @@
     const NO_JUMP_X_OFFSET = 40;
     const NO_JUMP_Y_RANGE = 30;
     const NO_JUMP_Y_OFFSET = 15;
-    const MAX_YES_SCALE = 1.45;
-    const YES_GROWTH_RATE = 0.06;
+    const MAX_YES_SCALE = 8;
+    const YES_GROWTH_RATE = 0.24;
+    const LARGE_YES_TRIGGER = 3;
+    const VIEWPORT_SCALE_FACTOR = 0.9;
+    const GIANT_YES_Z_INDEX = 8;
     const FONT_SIZE_SHRINK_THRESHOLD = 5;
     const NORMAL_NO_FONT_SIZE = '0.92rem';
     const SHRUNK_NO_FONT_SIZE = '0.82rem';
@@ -252,7 +261,10 @@
       const maxTop = Math.max(actionsRect.height - noBtn.offsetHeight, 0);
       const jumpX = Math.floor(Math.random() * NO_JUMP_X_RANGE) - NO_JUMP_X_OFFSET;
       const jumpY = Math.floor(Math.random() * NO_JUMP_Y_RANGE) - NO_JUMP_Y_OFFSET;
-      const growYes = Math.min(MAX_YES_SCALE, 1 + noCount * YES_GROWTH_RATE);
+      const yesWidth = Math.max(yesBtn.offsetWidth, 1);
+      const yesHeight = Math.max(yesBtn.offsetHeight, 1);
+      const maxViewportScale = Math.max(1, Math.min((window.innerWidth * VIEWPORT_SCALE_FACTOR) / yesWidth, (window.innerHeight * VIEWPORT_SCALE_FACTOR) / yesHeight));
+      const growYes = Math.min(MAX_YES_SCALE, maxViewportScale, 1 + noCount * YES_GROWTH_RATE);
       const spin = Math.floor(Math.random() * 120) - 60;
 
       noBtn.style.position = 'absolute';
@@ -260,7 +272,19 @@
       noBtn.style.top = `${Math.random() * maxTop}px`;
       noBtn.style.fontSize = noCount > FONT_SIZE_SHRINK_THRESHOLD ? SHRUNK_NO_FONT_SIZE : NORMAL_NO_FONT_SIZE;
       noBtn.style.transform = prefersReducedMotion ? 'none' : `translate(${jumpX}px, ${jumpY}px) rotate(${spin}deg) scale(${Math.max(MIN_NO_SCALE, INITIAL_NO_SCALE - noCount * NO_SHRINK_RATE)})`;
-      yesBtn.style.transform = prefersReducedMotion ? 'none' : `scale(${growYes})`;
+      if (noCount >= LARGE_YES_TRIGGER) {
+        yesBtn.style.position = 'fixed';
+        yesBtn.style.left = '50%';
+        yesBtn.style.top = '50%';
+        yesBtn.style.zIndex = GIANT_YES_Z_INDEX;
+        yesBtn.style.transform = prefersReducedMotion ? 'translate(-50%, -50%)' : `translate(-50%, -50%) scale(${growYes})`;
+      } else {
+        yesBtn.style.position = '';
+        yesBtn.style.left = '';
+        yesBtn.style.top = '';
+        yesBtn.style.zIndex = '';
+        yesBtn.style.transform = prefersReducedMotion ? 'none' : `scale(${growYes})`;
+      }
     }
 
     yesBtn.addEventListener('click', () => {
@@ -271,9 +295,7 @@
     });
 
     const evadeNoButton = () => {
-      if (noCount >= 1) {
-        trickNoButton();
-      }
+      trickNoButton();
     };
     noBtn.addEventListener('mouseenter', evadeNoButton);
     noBtn.addEventListener('focus', evadeNoButton);
