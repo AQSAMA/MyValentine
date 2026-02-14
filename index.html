@@ -163,7 +163,7 @@
     <div class="result" id="result" aria-live="polite">
       <strong id="resultTitle"></strong>
       <!-- Replace src below with your preferred GIF -->
-      <img id="resultGif" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdjR4OGQzMG91dWR3OXQ5N3MyN3E2Y2YweWhzYXBwbGd4bmRrcHNiMCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/LmNwrBhejkK9EFP504/giphy.gif" alt="Celebration GIF" />
+      <img id="resultGif" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdjR4OGQzMG91dWR3OXQ5N3MyN3E2Y2YweWhzYXBwbGd4bmRrcHNiMCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/LmNwrBhejkK9EFP504/giphy.gif" alt="Animated celebration with confetti and hearts" loading="lazy" width="320" height="320" />
     </div>
   </main>
 
@@ -178,6 +178,7 @@
           'Okay okay... but what if the answer is YES?'
         ],
         subtitle: 'One tiny click can unlock unlimited cute moments.',
+        yesSubtitle: 'I knew you were the cutest human ❤️',
         yes: 'Yes 💖',
         no: 'No 🙈',
         celebrate: 'YAY! Best answer ever! ✨'
@@ -191,6 +192,7 @@
           'طيب... ماذا لو كانت الإجابة "نعم"؟'
         ],
         subtitle: 'ضغطة بسيطة تفتح لحظات لطيفة بلا نهاية.',
+        yesSubtitle: 'عرفت أنك/أنكِ ألطف شخص ❤️',
         yes: 'نعم 💖',
         no: 'لا 🙈',
         celebrate: 'ياااي! أحلى إجابة! ✨'
@@ -199,6 +201,11 @@
 
     let lang = 'en';
     let noCount = 0;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const NO_JUMP_X_RANGE = 80;
+    const NO_JUMP_X_OFFSET = 40;
+    const NO_JUMP_Y_RANGE = 30;
+    const NO_JUMP_Y_OFFSET = 15;
 
     const titleEl = document.getElementById('title');
     const subtitleEl = document.getElementById('subtitle');
@@ -227,41 +234,42 @@
       render();
 
       if (noCount === 1) {
-        noBtn.style.transform = 'translateX(36px)';
+        noBtn.style.transform = prefersReducedMotion ? 'none' : 'translateX(36px)';
         return;
       }
 
       if (noCount === 2) {
-        noBtn.style.transform = 'translateY(18px) scale(0.85)';
-        yesBtn.style.transform = 'scale(1.1)';
+        noBtn.style.transform = prefersReducedMotion ? 'none' : 'translateY(18px) scale(0.85)';
+        yesBtn.style.transform = prefersReducedMotion ? 'none' : 'scale(1.1)';
         return;
       }
 
       if (noCount === 3) {
-        noBtn.style.position = 'absolute';
-        noBtn.style.left = `${Math.max(5, Math.floor(Math.random() * 75))}%`;
-        noBtn.style.top = `${Math.max(8, Math.floor(Math.random() * 58))}%`;
+        const jumpX = Math.floor(Math.random() * NO_JUMP_X_RANGE) - NO_JUMP_X_OFFSET;
+        const jumpY = Math.floor(Math.random() * NO_JUMP_Y_RANGE) - NO_JUMP_Y_OFFSET;
+        noBtn.style.transform = prefersReducedMotion ? 'none' : `translate(${jumpX}px, ${jumpY}px) scale(0.78)`;
         noBtn.style.fontSize = '0.8rem';
         return;
       }
 
-      noBtn.style.opacity = '0.08';
-      noBtn.style.pointerEvents = 'none';
-      yesBtn.style.transform = 'scale(1.16)';
+      noBtn.style.opacity = '0.42';
+      yesBtn.style.transform = prefersReducedMotion ? 'none' : 'scale(1.16)';
     }
 
     yesBtn.addEventListener('click', () => {
       result.style.display = 'block';
-      yesBtn.style.transform = 'scale(1.06)';
+      yesBtn.style.transform = prefersReducedMotion ? 'none' : 'scale(1.06)';
       noBtn.style.display = 'none';
-      subtitleEl.textContent = lang === 'ar' ? 'عرفت أنك/أنكِ ألطف شخص ❤️' : 'I knew you were the cutest human ❤️';
+      subtitleEl.textContent = content[lang].yesSubtitle;
     });
 
-    noBtn.addEventListener('mouseenter', () => {
+    const evadeNoButton = () => {
       if (noCount >= 3) {
         trickNoButton();
       }
-    });
+    };
+    noBtn.addEventListener('mouseenter', evadeNoButton);
+    noBtn.addEventListener('focus', evadeNoButton);
 
     noBtn.addEventListener('click', trickNoButton);
 
