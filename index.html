@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Be My Valentine?</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@500;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap');
+
+    :root {
+      --bg: #160b19;
+      --card: rgba(255, 239, 252, 0.1);
+      --text: #ffeef6;
+      --accent: #ff5e9d;
+      --accent-2: #ffd166;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 1.25rem;
+      font-family: 'Fraunces', serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 20% 20%, #582a63 0%, transparent 40%),
+        radial-gradient(circle at 80% 10%, #2f4f87 0%, transparent 32%),
+        radial-gradient(circle at 70% 75%, #803d67 0%, transparent 36%),
+        var(--bg);
+      overflow-x: hidden;
+    }
+
+    .lang-toggle {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      display: inline-flex;
+      gap: 0.35rem;
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 999px;
+      padding: 0.25rem;
+      backdrop-filter: blur(6px);
+      background: rgba(8, 5, 14, 0.45);
+    }
+
+    .lang-toggle button {
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: #f9d8e9;
+      padding: 0.32rem 0.78rem;
+      font: 600 0.82rem/1 'Cairo', sans-serif;
+      cursor: pointer;
+    }
+
+    .lang-toggle button.active {
+      background: #f8d2e7;
+      color: #2e1228;
+    }
+
+    .card {
+      width: min(680px, 100%);
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 1.25rem;
+      padding: 2rem 1.25rem 1.5rem;
+      background: var(--card);
+      box-shadow: 0 16px 40px rgba(12, 2, 17, 0.36);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.95rem, 5vw, 3rem);
+      letter-spacing: 0.02em;
+    }
+
+    p {
+      margin: 0.8rem auto 1.5rem;
+      max-width: 34ch;
+      font-family: 'Cairo', sans-serif;
+      line-height: 1.5;
+      color: #ffdff0;
+    }
+
+    .actions {
+      position: relative;
+      min-height: 70px;
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    button.choice {
+      border: 0;
+      border-radius: 999px;
+      padding: 0.7rem 1.35rem;
+      cursor: pointer;
+      transition: transform .2s ease, opacity .2s ease;
+      font: 700 1rem/1 'Cairo', sans-serif;
+    }
+
+    #yesBtn {
+      background: linear-gradient(120deg, var(--accent), #ff8bc0);
+      color: white;
+      box-shadow: 0 8px 20px rgba(255, 94, 157, 0.35);
+    }
+
+    #noBtn {
+      background: rgba(255,255,255,0.2);
+      color: #fff5fb;
+      border: 1px solid rgba(255,255,255,0.28);
+      position: relative;
+    }
+
+    .result {
+      margin-top: 1rem;
+      display: none;
+      animation: pop .35s ease;
+    }
+
+    .result img {
+      width: min(320px, 92%);
+      border-radius: 1rem;
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      box-shadow: 0 10px 28px rgba(0,0,0,0.28);
+    }
+
+    .result strong {
+      display: block;
+      font-size: clamp(1.25rem, 4vw, 1.8rem);
+      margin-bottom: 0.65rem;
+      color: var(--accent-2);
+    }
+
+    @keyframes pop {
+      from { opacity: 0; transform: translateY(8px) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+  </style>
+</head>
+<body>
+  <div class="lang-toggle" role="group" aria-label="Language switcher">
+    <button id="enBtn" class="active" type="button">EN</button>
+    <button id="arBtn" type="button">AR</button>
+  </div>
+
+  <main class="card">
+    <h1 id="title"></h1>
+    <p id="subtitle"></p>
+
+    <div class="actions" id="actions">
+      <button class="choice" id="yesBtn" type="button"></button>
+      <button class="choice" id="noBtn" type="button"></button>
+    </div>
+
+    <div class="result" id="result" aria-live="polite">
+      <strong id="resultTitle"></strong>
+      <!-- Replace src below with your preferred GIF -->
+      <img id="resultGif" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdjR4OGQzMG91dWR3OXQ5N3MyN3E2Y2YweWhzYXBwbGd4bmRrcHNiMCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/LmNwrBhejkK9EFP504/giphy.gif" alt="Celebration GIF" />
+    </div>
+  </main>
+
+  <script>
+    const content = {
+      en: {
+        title: [
+          'Will you be my Valentine?',
+          'Are you suuure you want to say no?',
+          'Maybe reconsider? I made this just for you 💌',
+          'Last chance before the No button escapes 👀',
+          'Okay okay... but what if the answer is YES?'
+        ],
+        subtitle: 'One tiny click can unlock unlimited cute moments.',
+        yes: 'Yes 💖',
+        no: 'No 🙈',
+        celebrate: 'YAY! Best answer ever! ✨'
+      },
+      ar: {
+        title: [
+          'هل ستكون/ين حبيب/تي في عيد الحب؟',
+          'متأكد/ة من كلمة لا؟',
+          'فكر/ي مرة ثانية... صممت هذا خصيصًا لك 💌',
+          'آخر فرصة قبل ما زر "لا" يهرب 👀',
+          'طيب... ماذا لو كانت الإجابة "نعم"؟'
+        ],
+        subtitle: 'ضغطة بسيطة تفتح لحظات لطيفة بلا نهاية.',
+        yes: 'نعم 💖',
+        no: 'لا 🙈',
+        celebrate: 'ياااي! أحلى إجابة! ✨'
+      }
+    };
+
+    let lang = 'en';
+    let noCount = 0;
+
+    const titleEl = document.getElementById('title');
+    const subtitleEl = document.getElementById('subtitle');
+    const yesBtn = document.getElementById('yesBtn');
+    const noBtn = document.getElementById('noBtn');
+    const result = document.getElementById('result');
+    const resultTitle = document.getElementById('resultTitle');
+    const enBtn = document.getElementById('enBtn');
+    const arBtn = document.getElementById('arBtn');
+
+    function render() {
+      const t = content[lang];
+      document.documentElement.lang = lang;
+      document.body.dir = lang === 'ar' ? 'rtl' : 'ltr';
+      titleEl.textContent = t.title[Math.min(noCount, t.title.length - 1)];
+      subtitleEl.textContent = t.subtitle;
+      yesBtn.textContent = t.yes;
+      noBtn.textContent = t.no;
+      resultTitle.textContent = t.celebrate;
+      enBtn.classList.toggle('active', lang === 'en');
+      arBtn.classList.toggle('active', lang === 'ar');
+    }
+
+    function trickNoButton() {
+      noCount += 1;
+      render();
+
+      if (noCount === 1) {
+        noBtn.style.transform = 'translateX(36px)';
+        return;
+      }
+
+      if (noCount === 2) {
+        noBtn.style.transform = 'translateY(18px) scale(0.85)';
+        yesBtn.style.transform = 'scale(1.1)';
+        return;
+      }
+
+      if (noCount === 3) {
+        noBtn.style.position = 'absolute';
+        noBtn.style.left = `${Math.max(5, Math.floor(Math.random() * 75))}%`;
+        noBtn.style.top = `${Math.max(8, Math.floor(Math.random() * 58))}%`;
+        noBtn.style.fontSize = '0.8rem';
+        return;
+      }
+
+      noBtn.style.opacity = '0.08';
+      noBtn.style.pointerEvents = 'none';
+      yesBtn.style.transform = 'scale(1.16)';
+    }
+
+    yesBtn.addEventListener('click', () => {
+      result.style.display = 'block';
+      yesBtn.style.transform = 'scale(1.06)';
+      noBtn.style.display = 'none';
+      subtitleEl.textContent = lang === 'ar' ? 'عرفت أنك/أنكِ ألطف شخص ❤️' : 'I knew you were the cutest human ❤️';
+    });
+
+    noBtn.addEventListener('mouseenter', () => {
+      if (noCount >= 3) {
+        trickNoButton();
+      }
+    });
+
+    noBtn.addEventListener('click', trickNoButton);
+
+    enBtn.addEventListener('click', () => { lang = 'en'; render(); });
+    arBtn.addEventListener('click', () => { lang = 'ar'; render(); });
+
+    render();
+  </script>
+</body>
+</html>
