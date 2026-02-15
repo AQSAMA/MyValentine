@@ -301,7 +301,7 @@
 
       <div class="result" id="result" aria-live="polite">
         <strong id="resultTitle"></strong>
-        <img id="resultGif" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdjR4OGQzMG91dWR3OXQ5N3MyN3E2Y2YweWhzYXBwbGd4bmRrcHNiMCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/LmNwrBhejkK9EFP504/giphy.gif" alt="Animated celebration with confetti and hearts" loading="lazy" width="350" height="350" />
+        <img id="resultGif" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdjR4OGQzMG91dWR3OXQ5N3MyN3E2Y2YweWhzYXBwbGd4bmRrcHNiMCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/LmNwrBhejkK9EFP504/giphy.gif" alt="Animated celebration with confetti and hearts" loading="lazy" />
       </div>
     </main>
   </div>
@@ -386,8 +386,6 @@
       const maxLeft = Math.max(buttonAreaRect.width - noBtn.offsetWidth - 20, 0);
       const maxTop = Math.max(buttonAreaRect.height - noBtn.offsetHeight - 20, 0);
       
-      const shouldTeleport = noCount > 2 && Math.random() < 0.3;
-      
       noBtn.style.position = 'absolute';
       noBtn.style.left = `${Math.random() * maxLeft}px`;
       noBtn.style.top = `${Math.random() * maxTop}px`;
@@ -409,7 +407,7 @@
 
     yesBtn.addEventListener('click', () => {
       result.style.display = 'block';
-      yesBtn.style.transform = 'scale(1.1)';
+      yesBtn.style.transform = prefersReducedMotion ? 'none' : 'scale(1.1)';
       noBtn.style.display = 'none';
       subtitleEl.textContent = content[lang].yesSubtitle;
       buttonArea.style.minHeight = 'auto';
