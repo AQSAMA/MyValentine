@@ -228,9 +228,12 @@
     const LARGE_YES_TRIGGER = 3;
     const VIEWPORT_SCALE_FACTOR = 0.9;
     const GIANT_YES_Z_INDEX = 8;
-    const GIANT_YES_TOP = '76%';
+    const GIANT_YES_TOP_POSITION = '76%';
     const GIANT_YES_WIDTH_RATIO = 0.5;
     const GIANT_YES_MIN_HEIGHT_RATIO = 0.22;
+    const MAX_HUE_ROTATION = 300;
+    const TELEPORT_START_THRESHOLD = 2;
+    const TELEPORT_FREQUENCY = 4;
     const FONT_SIZE_SHRINK_THRESHOLD = 5;
     const NORMAL_NO_FONT_SIZE = '0.92rem';
     const SHRUNK_NO_FONT_SIZE = '0.82rem';
@@ -274,8 +277,8 @@
       const maxViewportScale = Math.max(1, Math.min((window.innerWidth * VIEWPORT_SCALE_FACTOR) / yesWidth, (window.innerHeight * VIEWPORT_SCALE_FACTOR) / yesHeight));
       const growYes = Math.min(MAX_YES_SCALE, maxViewportScale, 1 + noCount * YES_GROWTH_RATE);
       const spin = Math.floor(Math.random() * 120) - 60;
-      const hue = Math.floor(Math.random() * 300);
-      const shouldTeleport = noCount > 2 && noCount % 4 === 0;
+      const hue = Math.floor(Math.random() * MAX_HUE_ROTATION);
+      const shouldTeleport = noCount > TELEPORT_START_THRESHOLD && noCount % TELEPORT_FREQUENCY === 0;
 
       noBtn.style.position = shouldTeleport ? 'fixed' : 'absolute';
       noBtn.style.left = shouldTeleport ? `${Math.random() * Math.max(window.innerWidth - noBtn.offsetWidth, 0)}px` : `${Math.random() * maxLeft}px`;
@@ -288,7 +291,7 @@
         const giantMinHeight = Math.min(window.innerHeight * GIANT_YES_MIN_HEIGHT_RATIO, 220);
         yesBtn.style.position = 'fixed';
         yesBtn.style.left = '50%';
-        yesBtn.style.top = GIANT_YES_TOP;
+        yesBtn.style.top = GIANT_YES_TOP_POSITION;
         yesBtn.style.zIndex = GIANT_YES_Z_INDEX;
         yesBtn.style.width = `${giantWidth}px`;
         yesBtn.style.minHeight = `${giantMinHeight}px`;
