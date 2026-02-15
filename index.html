@@ -5,148 +5,277 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Be My Valentine?</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@500;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@400;600;800&display=swap');
 
     :root {
-      --bg: #160b19;
-      --card: rgba(255, 239, 252, 0.1);
-      --text: #ffeef6;
-      --accent: #ff5e9d;
-      --accent-2: #ffd166;
+      --bg-start: #0a0e27;
+      --bg-end: #1a0b2e;
+      --card-bg: rgba(255, 255, 255, 0.03);
+      --card-border: rgba(255, 255, 255, 0.1);
+      --text-primary: #ffffff;
+      --text-secondary: #e0d4f7;
+      --accent-pink: #ff006e;
+      --accent-purple: #8338ec;
+      --accent-blue: #3a86ff;
+      --accent-gold: #ffbe0b;
+      --shadow-color: rgba(131, 56, 236, 0.3);
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
     body {
-      margin: 0;
       min-height: 100vh;
-      display: grid;
-      place-items: center;
-      padding: 1.25rem;
-      font-family: 'Fraunces', serif;
-      color: var(--text);
-      background:
-        radial-gradient(circle at 20% 20%, #582a63 0%, transparent 40%),
-        radial-gradient(circle at 80% 10%, #2f4f87 0%, transparent 32%),
-        radial-gradient(circle at 70% 75%, #803d67 0%, transparent 36%),
-        var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      font-family: 'Outfit', sans-serif;
+      color: var(--text-primary);
+      background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-end) 100%);
+      position: relative;
       overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: 
+        radial-gradient(circle at 20% 30%, rgba(255, 0, 110, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(131, 56, 236, 0.12) 0%, transparent 50%),
+        radial-gradient(circle at 40% 80%, rgba(58, 134, 255, 0.1) 0%, transparent 50%);
+      animation: float 20s ease-in-out infinite;
+      z-index: 0;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      25% { transform: translate(2%, -2%) rotate(1deg); }
+      50% { transform: translate(-1%, 2%) rotate(-1deg); }
+      75% { transform: translate(-2%, -1%) rotate(0.5deg); }
     }
 
     .lang-toggle {
       position: fixed;
-      top: 1rem;
-      right: 1rem;
-      display: inline-flex;
-      gap: 0.35rem;
-      border: 1px solid rgba(255,255,255,0.25);
-      border-radius: 999px;
-      padding: 0.25rem;
-      backdrop-filter: blur(6px);
-      background: rgba(8, 5, 14, 0.45);
+      top: 1.5rem;
+      right: 1.5rem;
+      display: flex;
+      gap: 0.5rem;
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--card-border);
+      border-radius: 50px;
+      padding: 0.35rem;
     }
 
     .lang-toggle button {
-      border: 0;
-      border-radius: 999px;
+      border: none;
       background: transparent;
-      color: #f9d8e9;
-      padding: 0.32rem 0.78rem;
-      font: 600 0.82rem/1 'Cairo', sans-serif;
+      color: var(--text-secondary);
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      font: 600 0.875rem 'Outfit', sans-serif;
       cursor: pointer;
+      transition: all 0.3s ease;
     }
 
     .lang-toggle button.active {
-      background: #f8d2e7;
-      color: #2e1228;
+      background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+      color: white;
+      box-shadow: 0 4px 15px var(--shadow-color);
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 900px;
     }
 
     .card {
-      width: min(680px, 100%);
-      border: 1px solid rgba(255,255,255,0.22);
-      border-radius: 1.25rem;
-      padding: 2rem 1.25rem 1.5rem;
-      background: var(--card);
-      box-shadow: 0 16px 40px rgba(12, 2, 17, 0.36);
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--card-border);
+      border-radius: 2rem;
+      padding: 3rem 2rem;
+      box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
       text-align: center;
-      position: relative;
-      overflow: hidden;
+    }
+
+    .header {
+      margin-bottom: 2.5rem;
+      min-height: 180px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
 
     h1 {
-      margin: 0;
-      font-size: clamp(1.95rem, 5vw, 3rem);
-      letter-spacing: 0.02em;
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      line-height: 1.2;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple), var(--accent-blue));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 400;
+      letter-spacing: -0.02em;
     }
 
     p {
-      margin: 0.8rem auto 1.5rem;
-      max-width: 34ch;
-      font-family: 'Cairo', sans-serif;
-      line-height: 1.5;
-      color: #ffdff0;
+      font-size: clamp(1rem, 2.5vw, 1.25rem);
+      color: var(--text-secondary);
+      max-width: 500px;
+      margin: 0 auto;
+      line-height: 1.6;
+      font-weight: 400;
+    }
+
+    .button-area {
+      position: relative;
+      min-height: 350px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2rem;
     }
 
     .actions {
       position: relative;
-      min-height: 70px;
+      width: 100%;
+      min-height: 80px;
       display: flex;
-      gap: 0.75rem;
+      gap: 1.5rem;
       align-items: center;
       justify-content: center;
       flex-wrap: wrap;
+      padding: 2rem 0;
     }
 
     button.choice {
-      border: 0;
-      border-radius: 999px;
-      padding: 0.7rem 1.35rem;
+      position: relative;
+      border: none;
+      border-radius: 50px;
+      padding: 1rem 2.5rem;
+      font: 800 1.125rem 'Outfit', sans-serif;
       cursor: pointer;
-      transition: transform .2s ease, opacity .2s ease;
-      font: 700 1rem/1 'Cairo', sans-serif;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       display: inline-flex;
       align-items: center;
       justify-content: center;
       text-align: center;
-      white-space: normal;
+      white-space: nowrap;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
     }
 
     #yesBtn {
-      background: linear-gradient(120deg, var(--accent), #ff8bc0);
+      background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
       color: white;
-      box-shadow: 0 8px 20px rgba(255, 94, 157, 0.35);
+      box-shadow: 
+        0 10px 30px var(--shadow-color),
+        0 0 0 0 rgba(255, 0, 110, 0.5);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        box-shadow: 
+          0 10px 30px var(--shadow-color),
+          0 0 0 0 rgba(255, 0, 110, 0.5);
+      }
+      50% {
+        box-shadow: 
+          0 10px 40px var(--shadow-color),
+          0 0 0 10px rgba(255, 0, 110, 0);
+      }
+    }
+
+    #yesBtn:hover {
+      transform: translateY(-2px);
+      box-shadow: 
+        0 15px 40px var(--shadow-color),
+        0 0 0 0 rgba(255, 0, 110, 0.5);
     }
 
     #noBtn {
-      background: rgba(255,255,255,0.2);
-      color: #fff5fb;
-      border: 1px solid rgba(255,255,255,0.28);
-      position: relative;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-secondary);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    #noBtn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.3);
     }
 
     .result {
-      margin-top: 1rem;
+      margin-top: 2rem;
       display: none;
-      animation: pop .35s ease;
+      animation: fadeInUp 0.6s ease;
     }
 
     .result img {
-      width: min(320px, 92%);
-      border-radius: 1rem;
-      border: 2px solid rgba(255, 255, 255, 0.4);
-      box-shadow: 0 10px 28px rgba(0,0,0,0.28);
+      width: min(350px, 100%);
+      height: auto;
+      border-radius: 1.5rem;
+      border: 2px solid var(--card-border);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+      margin-top: 1rem;
     }
 
     .result strong {
       display: block;
-      font-size: clamp(1.25rem, 4vw, 1.8rem);
-      margin-bottom: 0.65rem;
-      color: var(--accent-2);
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.5rem, 4vw, 2.5rem);
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, var(--accent-gold), var(--accent-pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 400;
     }
 
-    @keyframes pop {
-      from { opacity: 0; transform: translateY(8px) scale(0.97); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .card {
+        padding: 2rem 1.5rem;
+      }
+
+      .header {
+        min-height: 150px;
+      }
+
+      .button-area {
+        min-height: 300px;
+      }
+
+      button.choice {
+        padding: 0.875rem 2rem;
+        font-size: 1rem;
+      }
     }
   </style>
 </head>
@@ -156,21 +285,26 @@
     <button id="arBtn" type="button">AR</button>
   </div>
 
-  <main class="card">
-    <h1 id="title"></h1>
-    <p id="subtitle"></p>
+  <div class="container">
+    <main class="card">
+      <div class="header">
+        <h1 id="title"></h1>
+        <p id="subtitle"></p>
+      </div>
 
-    <div class="actions" id="actions">
-      <button class="choice" id="yesBtn" type="button"></button>
-      <button class="choice" id="noBtn" type="button"></button>
-    </div>
+      <div class="button-area">
+        <div class="actions" id="actions">
+          <button class="choice" id="yesBtn" type="button"></button>
+          <button class="choice" id="noBtn" type="button"></button>
+        </div>
+      </div>
 
-    <div class="result" id="result" aria-live="polite">
-      <strong id="resultTitle"></strong>
-      <!-- Replace src below with your preferred GIF -->
-      <img id="resultGif" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdjR4OGQzMG91dWR3OXQ5N3MyN3E2Y2YweWhzYXBwbGd4bmRrcHNiMCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/LmNwrBhejkK9EFP504/giphy.gif" alt="Animated celebration with confetti and hearts" loading="lazy" width="320" height="320" />
-    </div>
-  </main>
+      <div class="result" id="result" aria-live="polite">
+        <strong id="resultTitle"></strong>
+        <img id="resultGif" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdjR4OGQzMG91dWR3OXQ5N3MyN3E2Y2YweWhzYXBwbGd4bmRrcHNiMCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/LmNwrBhejkK9EFP504/giphy.gif" alt="Animated celebration with confetti and hearts" loading="lazy" />
+      </div>
+    </main>
+  </div>
 
   <script>
     const content = {
@@ -219,34 +353,10 @@
     let lang = 'en';
     let noCount = 0;
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const NO_JUMP_X_RANGE = 80;
-    const NO_JUMP_X_OFFSET = 40;
-    const NO_JUMP_Y_RANGE = 30;
-    const NO_JUMP_Y_OFFSET = 15;
-    const MAX_YES_SCALE = 8;
-    const YES_GROWTH_RATE = 0.24;
-    const LARGE_YES_TRIGGER = 3;
-    const VIEWPORT_SCALE_FACTOR = 0.9;
-    const GIANT_YES_Z_INDEX = 8;
-    const GIANT_YES_TOP_POSITION = '76%';
-    const GIANT_YES_WIDTH_RATIO = 0.5;
-    const GIANT_YES_MIN_HEIGHT_RATIO = 0.22;
-    const HUE_ROTATION_RANGE = 360;
-    const TELEPORT_START_THRESHOLD = 2;
-    const TELEPORT_CHANCE = 0.35;
-    const GIANT_YES_SCALE_DAMPENER = 0.45;
-    const MAX_GIANT_YES_FONT_SIZE = 2.2;
-    const BASE_GIANT_YES_FONT_SIZE = 1.1;
-    const GIANT_YES_FONT_GROWTH_RATE = 0.08;
-    const FONT_SIZE_SHRINK_THRESHOLD = 5;
-    const NORMAL_NO_FONT_SIZE = '0.92rem';
-    const SHRUNK_NO_FONT_SIZE = '0.82rem';
-    const MIN_NO_SCALE = 0.58;
-    const INITIAL_NO_SCALE = 0.95;
-    const NO_SHRINK_RATE = 0.02;
 
     const titleEl = document.getElementById('title');
     const subtitleEl = document.getElementById('subtitle');
+    const buttonArea = document.querySelector('.button-area');
     const actions = document.getElementById('actions');
     const yesBtn = document.getElementById('yesBtn');
     const noBtn = document.getElementById('noBtn');
@@ -271,67 +381,71 @@
     function trickNoButton() {
       noCount += 1;
       render();
-      const actionsRect = actions.getBoundingClientRect();
-      const maxLeft = Math.max(actionsRect.width - noBtn.offsetWidth, 0);
-      const maxTop = Math.max(actionsRect.height - noBtn.offsetHeight, 0);
-      const jumpX = Math.floor(Math.random() * NO_JUMP_X_RANGE) - NO_JUMP_X_OFFSET;
-      const jumpY = Math.floor(Math.random() * NO_JUMP_Y_RANGE) - NO_JUMP_Y_OFFSET;
-      const yesWidth = Math.max(yesBtn.offsetWidth, 1);
-      const yesHeight = Math.max(yesBtn.offsetHeight, 1);
-      const maxViewportScale = Math.max(1, Math.min((window.innerWidth * VIEWPORT_SCALE_FACTOR) / yesWidth, (window.innerHeight * VIEWPORT_SCALE_FACTOR) / yesHeight));
-      const growYes = Math.min(MAX_YES_SCALE, maxViewportScale, 1 + noCount * YES_GROWTH_RATE);
-      const spin = Math.floor(Math.random() * 120) - 60;
-      const hue = Math.floor(Math.random() * HUE_ROTATION_RANGE);
-      const shouldTeleport = noCount > TELEPORT_START_THRESHOLD && Math.random() < TELEPORT_CHANCE;
 
-      noBtn.style.position = shouldTeleport ? 'fixed' : 'absolute';
-      noBtn.style.left = shouldTeleport ? `${Math.random() * Math.max(window.innerWidth - noBtn.offsetWidth, 0)}px` : `${Math.random() * maxLeft}px`;
-      noBtn.style.top = shouldTeleport ? `${Math.random() * Math.max(window.innerHeight - noBtn.offsetHeight, 0)}px` : `${Math.random() * maxTop}px`;
-      noBtn.style.fontSize = noCount > FONT_SIZE_SHRINK_THRESHOLD ? SHRUNK_NO_FONT_SIZE : NORMAL_NO_FONT_SIZE;
-      noBtn.style.transform = prefersReducedMotion ? 'none' : `translate(${jumpX}px, ${jumpY}px) rotate(${spin}deg) scale(${Math.max(MIN_NO_SCALE, INITIAL_NO_SCALE - noCount * NO_SHRINK_RATE)})`;
-      noBtn.style.filter = `hue-rotate(${hue}deg) saturate(1.25)`;
-      if (noCount >= LARGE_YES_TRIGGER) {
-        const giantWidth = Math.min(window.innerWidth * GIANT_YES_WIDTH_RATIO, 640);
-        const giantMinHeight = Math.min(window.innerHeight * GIANT_YES_MIN_HEIGHT_RATIO, 220);
-        yesBtn.style.position = 'fixed';
-        yesBtn.style.left = '50%';
-        yesBtn.style.top = GIANT_YES_TOP_POSITION;
-        yesBtn.style.zIndex = GIANT_YES_Z_INDEX;
-        yesBtn.style.width = `${giantWidth}px`;
-        yesBtn.style.minHeight = `${giantMinHeight}px`;
-        yesBtn.style.padding = '1rem 1.5rem';
-        yesBtn.style.fontSize = `${Math.min(MAX_GIANT_YES_FONT_SIZE, BASE_GIANT_YES_FONT_SIZE + noCount * GIANT_YES_FONT_GROWTH_RATE)}rem`;
-        yesBtn.style.transform = prefersReducedMotion ? 'translate(-50%, -50%)' : `translate(-50%, -50%) scale(${Math.max(1, growYes * GIANT_YES_SCALE_DAMPENER)})`;
-      } else {
-        yesBtn.style.position = '';
-        yesBtn.style.left = '';
-        yesBtn.style.top = '';
-        yesBtn.style.zIndex = '';
-        yesBtn.style.width = '';
-        yesBtn.style.minHeight = '';
-        yesBtn.style.padding = '';
-        yesBtn.style.fontSize = '';
-        yesBtn.style.transform = prefersReducedMotion ? 'none' : `scale(${growYes})`;
+      const buttonAreaRect = buttonArea.getBoundingClientRect();
+      const maxLeft = Math.max(buttonAreaRect.width - noBtn.offsetWidth - 20, 0);
+      const maxTop = Math.max(buttonAreaRect.height - noBtn.offsetHeight - 20, 0);
+      
+      noBtn.style.position = 'absolute';
+      noBtn.style.left = `${Math.random() * maxLeft}px`;
+      noBtn.style.top = `${Math.random() * maxTop}px`;
+      
+      const spin = Math.floor(Math.random() * 120) - 60;
+      const shrinkScale = Math.max(0.6, 1 - noCount * 0.03);
+      noBtn.style.transform = prefersReducedMotion ? 'none' : `rotate(${spin}deg) scale(${shrinkScale})`;
+      
+      const hue = Math.floor(Math.random() * 360);
+      noBtn.style.filter = `hue-rotate(${hue}deg)`;
+
+      const growYes = Math.min(2.5, 1 + noCount * 0.15);
+      yesBtn.style.transform = prefersReducedMotion ? 'none' : `scale(${growYes})`;
+      
+      if (noCount > 5) {
+        noBtn.style.fontSize = '0.875rem';
       }
     }
 
     yesBtn.addEventListener('click', () => {
       result.style.display = 'block';
-      yesBtn.style.transform = prefersReducedMotion ? 'none' : 'scale(1.06)';
+      yesBtn.style.transform = prefersReducedMotion ? 'none' : 'scale(1.1)';
       noBtn.style.display = 'none';
       subtitleEl.textContent = content[lang].yesSubtitle;
+      buttonArea.style.minHeight = 'auto';
     });
 
     const evadeNoButton = () => {
       trickNoButton();
     };
+    
     noBtn.addEventListener('mouseenter', evadeNoButton);
     noBtn.addEventListener('focus', evadeNoButton);
-
     noBtn.addEventListener('click', trickNoButton);
 
-    enBtn.addEventListener('click', () => { lang = 'en'; render(); });
-    arBtn.addEventListener('click', () => { lang = 'ar'; render(); });
+    enBtn.addEventListener('click', () => { 
+      lang = 'en'; 
+      noCount = 0;
+      yesBtn.style.transform = '';
+      noBtn.style.position = '';
+      noBtn.style.left = '';
+      noBtn.style.top = '';
+      noBtn.style.transform = '';
+      noBtn.style.filter = '';
+      noBtn.style.fontSize = '';
+      render(); 
+    });
+    
+    arBtn.addEventListener('click', () => { 
+      lang = 'ar'; 
+      noCount = 0;
+      yesBtn.style.transform = '';
+      noBtn.style.position = '';
+      noBtn.style.left = '';
+      noBtn.style.top = '';
+      noBtn.style.transform = '';
+      noBtn.style.filter = '';
+      noBtn.style.fontSize = '';
+      render(); 
+    });
 
     render();
   </script>
