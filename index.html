@@ -104,6 +104,11 @@
       cursor: pointer;
       transition: transform .2s ease, opacity .2s ease;
       font: 700 1rem/1 'Cairo', sans-serif;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      white-space: normal;
     }
 
     #yesBtn {
@@ -223,6 +228,9 @@
     const LARGE_YES_TRIGGER = 3;
     const VIEWPORT_SCALE_FACTOR = 0.9;
     const GIANT_YES_Z_INDEX = 8;
+    const GIANT_YES_TOP = '76%';
+    const GIANT_YES_WIDTH_RATIO = 0.5;
+    const GIANT_YES_MIN_HEIGHT_RATIO = 0.22;
     const FONT_SIZE_SHRINK_THRESHOLD = 5;
     const NORMAL_NO_FONT_SIZE = '0.92rem';
     const SHRUNK_NO_FONT_SIZE = '0.82rem';
@@ -266,23 +274,36 @@
       const maxViewportScale = Math.max(1, Math.min((window.innerWidth * VIEWPORT_SCALE_FACTOR) / yesWidth, (window.innerHeight * VIEWPORT_SCALE_FACTOR) / yesHeight));
       const growYes = Math.min(MAX_YES_SCALE, maxViewportScale, 1 + noCount * YES_GROWTH_RATE);
       const spin = Math.floor(Math.random() * 120) - 60;
+      const hue = Math.floor(Math.random() * 300);
+      const shouldTeleport = noCount > 2 && noCount % 4 === 0;
 
-      noBtn.style.position = 'absolute';
-      noBtn.style.left = `${Math.random() * maxLeft}px`;
-      noBtn.style.top = `${Math.random() * maxTop}px`;
+      noBtn.style.position = shouldTeleport ? 'fixed' : 'absolute';
+      noBtn.style.left = shouldTeleport ? `${Math.random() * Math.max(window.innerWidth - noBtn.offsetWidth, 0)}px` : `${Math.random() * maxLeft}px`;
+      noBtn.style.top = shouldTeleport ? `${Math.random() * Math.max(window.innerHeight - noBtn.offsetHeight, 0)}px` : `${Math.random() * maxTop}px`;
       noBtn.style.fontSize = noCount > FONT_SIZE_SHRINK_THRESHOLD ? SHRUNK_NO_FONT_SIZE : NORMAL_NO_FONT_SIZE;
       noBtn.style.transform = prefersReducedMotion ? 'none' : `translate(${jumpX}px, ${jumpY}px) rotate(${spin}deg) scale(${Math.max(MIN_NO_SCALE, INITIAL_NO_SCALE - noCount * NO_SHRINK_RATE)})`;
+      noBtn.style.filter = `hue-rotate(${hue}deg) saturate(1.25)`;
       if (noCount >= LARGE_YES_TRIGGER) {
+        const giantWidth = Math.min(window.innerWidth * GIANT_YES_WIDTH_RATIO, 640);
+        const giantMinHeight = Math.min(window.innerHeight * GIANT_YES_MIN_HEIGHT_RATIO, 220);
         yesBtn.style.position = 'fixed';
         yesBtn.style.left = '50%';
-        yesBtn.style.top = '50%';
+        yesBtn.style.top = GIANT_YES_TOP;
         yesBtn.style.zIndex = GIANT_YES_Z_INDEX;
-        yesBtn.style.transform = prefersReducedMotion ? 'translate(-50%, -50%)' : `translate(-50%, -50%) scale(${growYes})`;
+        yesBtn.style.width = `${giantWidth}px`;
+        yesBtn.style.minHeight = `${giantMinHeight}px`;
+        yesBtn.style.padding = '1rem 1.5rem';
+        yesBtn.style.fontSize = `${Math.min(2.2, 1.1 + noCount * 0.08)}rem`;
+        yesBtn.style.transform = prefersReducedMotion ? 'translate(-50%, -50%)' : `translate(-50%, -50%) scale(${Math.max(1, growYes * 0.45)})`;
       } else {
         yesBtn.style.position = '';
         yesBtn.style.left = '';
         yesBtn.style.top = '';
         yesBtn.style.zIndex = '';
+        yesBtn.style.width = '';
+        yesBtn.style.minHeight = '';
+        yesBtn.style.padding = '';
+        yesBtn.style.fontSize = '';
         yesBtn.style.transform = prefersReducedMotion ? 'none' : `scale(${growYes})`;
       }
     }
